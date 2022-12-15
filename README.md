@@ -15,22 +15,28 @@ This program works by using brute force process of eliminations. We begin with a
 Let's play a game of wordle! The word is  "RIVAL".
 
 Loading up the program looks like:
+
 ![Menu](https://github.com/jocon15/WordleHelper/blob/master/images/menu.png)
 
 You can see it gives us some random word suggestions.
 But I don't think any of those words sound good... So I'm going to guess "CHOKE".
+
 ![guess1](https://github.com/jocon15/WordleHelper/blob/master/images/guess2.png)
 
 Now we enter that into the program...
+
 ![input1](https://github.com/jocon15/WordleHelper/blob/master/images/input1.png)
 
 WOW, that guess elimiated 25,548 words from our original 30,825.
 
 Again, I don't like the suggestions so I'm going to guess "TRAPS".
+
 ![guess2](https://github.com/jocon15/WordleHelper/blob/master/images/guess2.png)
 
 Enter that in...
+
 ![input2](https://github.com/jocon15/WordleHelper/blob/master/images/input2.png)
+
 Cool, we eliminated 10,757 with that word.
 
 
