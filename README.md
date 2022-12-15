@@ -21,7 +21,7 @@ Loading up the program looks like:
 You can see it gives us some random word suggestions.
 But I don't think any of those words sound good... So I'm going to guess "CHOKE".
 
-![guess1](https://github.com/jocon15/WordleHelper/blob/master/images/guess2.png)
+![guess1](https://github.com/jocon15/WordleHelper/blob/master/images/guess1.png)
 
 Now we enter that into the program...
 
