@@ -2,12 +2,12 @@
 Never lose a Wordle again!
 
 ## What is it?
-Have you ever played wordle? Have you ever been on the last wordle guess and gotten stuck? No need to fear, the wordle helper is here!
+Have you ever played wordle? Have you ever been on the last wordle guess and gotten stuck? No need to fear, the WordleHelper is here!
 
 Wordle helper is a console application designed to help you with wordle. Use it as you do the daily wordle.
 
 ## Under the Hood
-there are about 30,825 5-letter words in the english language. That means you have a 1 in 30,825 chance of guessing the word on the first try. Not very good odds. Let's see if we can use a CPU to help.
+There are about 30,825 5-letter words in the english language. That means you have a 1 in 30,825 chance of guessing the word on the first try. Not very good odds. Let's see if we can use a CPU to help.
 
 This program works by using brute force process of eliminations. We begin with a list the 22950 possible words. Wordle provies us ways to eliminate letters. As you play wordle and enter in the results, the program removes possible words from the list based on the results.
 
@@ -55,18 +55,18 @@ Let's try that...
 
 Ding! Ding! Ding!
 
-
-
-
 ## WordleHelper Results
-Yes, WordleHelper was born yesterday. I have not added any logic to suggest certain words over others - thats still to come. However, I have played about 50 mock-wordle games with it and with moderate human selection, it usually deduces the word by guess 4 or 5.
+Yes, WordleHelper was born yesterday. I have not added any logic to suggest certain words over others - that's still to come. However, I have played about 50 mock-wordle games with it and with moderate human selection, it usually deduces the word by guess 4 or 5.
 
 ## The Future
-If you've played wordle, you get the sense that the words that it selects are commonly used words in the English language. In our set of words, we have some words that are valid words, but are rarely (if ever) used in today's English. An interesting area of research could be to look at something like Google Trends (https://trends.google.com/trends/?geo=US) for each of the remaining possible words, then select the more frequently used words as suggestions for the user.
+If you've played wordle, you get the sense that the words that it selects are commonly used words in the English language. In our set of words, we have some words that are valid words, but are rarely (if ever) used in today's English. You can see the abundance of these words in the suggestions that WordleHelper provides. An interesting area of research could be to look at something like Google Trends (https://trends.google.com/trends/?geo=US) for each of the remaining possible words, then select the more frequently used words as suggestions for the user.
+
+Another potentially useful suggestion mechanism is to favor words with a unique letter for each letter-spot. For example, let's say it's your first guess. You could guess something like "THERE". Notice that the letter "E" is repeated. When it comes time to filter, we only have 4 letters to filter with. Consider the word "CHORE". In this word, there's a unique letter in every spot. "CHORE" is a better first guess becuase it allows us to filter with 5 unique letters instead of 4.
 
 #### Additions Wishlist
 - [ ] Remove 5-letter words that are names from the database
 - [ ] Remove 5-character words that have characters like ' and  -
 - [ ] Suggestions based on current word usage analytics
+- [ ] Suggestions with unique letters
 
 
