@@ -39,6 +39,23 @@ Enter that in...
 
 Cool, we eliminated 10,757 with that word.
 
+Let's guess the word "RABID"
+
+![guess3](https://github.com/jocon15/WordleHelper/blob/master/images/guess3.png)
+
+Once again, enter it in...
+
+![input3](https://github.com/jocon15/WordleHelper/blob/master/images/input3.png)
+
+Looky here, only 7 words left. You can look through these words yourself, which one of them seems like it might be a word that wordle would select? (Which word sounds familiar) Ah yes, "RIVAL"
+
+Let's try that...
+
+![input4](https://github.com/jocon15/WordleHelper/blob/master/images/input4.png)
+
+Ding! Ding! Ding!
+
+
 
 
 ## WordleHelper Results
