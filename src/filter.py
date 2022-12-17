@@ -1,4 +1,5 @@
 import time
+import json
 import random
 from tqdm import tqdm
 
@@ -6,11 +7,16 @@ from tqdm import tqdm
 class Filter:
     def __init__(self):
         self.filename = 'words.txt'
+        self.json_filename = 'words.json'
         self.words = list()
+        self.words_dict = {}
         with open(self.filename, 'r') as file:
             for line in file.readlines():
                 if len(line.strip()) == 5:
                     self.words.append(line.strip().lower())
+
+        with open(self.json_filename, 'r') as file:
+            self.words_dict = json.load(file)
 
     def filter(self, guess_word: str, colors: str) -> list:
         """Filter the remaining words with a guess from the user.
@@ -74,10 +80,18 @@ class Filter:
         for word in self.words:
             if word not in black_list:
                 white_list.append(word)
+
+        for word in black_list:
+            if word in self.words_dict.keys():
+                del self.words_dict[word]
+
         end_time = time.time()
         print(f'Eliminated : {len(black_list)} words')
         print(f'Remaining  : {len(white_list)} words')
         print(f'Rendered in {round(end_time - start_time,3)} seconds')
+
+        self.print_suggestions()
+
         # set self.words to the whitelist
         self.words = white_list
         # return the whitelist
@@ -85,6 +99,15 @@ class Filter:
 
     def current_list(self):
         return self.words
+
+    def print_suggestions(self):
+        sort = sorted(self.words_dict.items(), key=lambda item: item[1])
+        sort = sort[-100:]
+        sort.reverse()
+        suggestions = ''
+        for _ in range(11):
+            suggestions += f'{random.choice(sort)[0]} '
+        print(f'Suggestions: {suggestions}')
 
     def random_word(self):
         if self.words:

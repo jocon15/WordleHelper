@@ -6,6 +6,8 @@ __pycache__/
 # Custom
 .idea/
 __pycache__/
+trends/
+books/
 
 # C extensions
 *.so
