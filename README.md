@@ -1,3 +1,6 @@
+[TOC]
+
+
 # WordleHelper
 Never lose a Wordle again!
 
@@ -58,15 +61,27 @@ Ding! Ding! Ding!
 ## WordleHelper Results
 Yes, WordleHelper was born yesterday. I have not added any logic to suggest certain words over others - that's still to come. However, I have played about 50 mock-wordle games with it and with moderate human selection, it usually deduces the word by guess 4 or 5.
 
+## Suggestion Model
+As previously mentioned, Wordle selects words that are commonly used in the English dictionary. You can't just manually sort 30K words one-by-one that would take way too long. My original thought was to use the Google Trends API to map a usage score to each word. Unfortunately, with the rate limit of the free version of the API, it would take 25 years to map all 5-letter words with a single usage score.
+
+So I thought of another way...
+
+I asked myself: what contains a lot of frequently used words?. . .Books! I found a website that houses royalty free text files of common books. I downloaded 20 books. I then built book_parse.py to build counters for all 5-letter words and count how many times they were used. You can see the results in words.json.
+
+Now, when you enter in a guess and narrow down the possible words, some randomly selected words from the most common of the remaining possible words are present to you. In the older version, you would see suggested words you've never heard of. Now, you see words that are familiar to you.
+
+There's still ways I can make this better, see The Future section for more.
+
 ## The Future
-If you've played wordle, you get the sense that the words that it selects are commonly used words in the English language. In our set of words, we have some words that are valid words, but are rarely (if ever) used in today's English. You can see the abundance of these words in the suggestions that WordleHelper provides. An interesting area of research could be to look at something like Google Trends (https://trends.google.com/trends/?geo=US) for each of the remaining possible words, then select the more frequently used words as suggestions for the user.
+
+20 books is not exactly the best sample size for word frequency analytics. I specifically remember trying to avoid older books as they have older (less-used) words. But I included some 1800's language books to try to taper the counts in a way that rejects words that are Shakespeare-esque language. Of course, the sample size is limited and there are words that are not accurately represented based on the luck of small sample sizes.
 
 Another potentially useful suggestion mechanism is to favor words with a unique letter for each letter-spot. For example, let's say it's your first guess. You could guess something like "THERE". Notice that the letter "E" is repeated. When it comes time to filter, we only have 4 letters to filter with. Consider the word "CHORE". In this word, there's a unique letter in every spot. "CHORE" is a better first guess becuase it allows us to filter with 5 unique letters instead of 4.
 
 #### Additions Wishlist
+- [x] Suggestions based on current word usage analytics
 - [ ] Remove 5-letter words that are names from the database
 - [ ] Remove 5-character words that have characters like ' and  -
-- [ ] Suggestions based on current word usage analytics
 - [ ] Suggestions with unique letters
 
 
