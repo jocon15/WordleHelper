@@ -1,7 +1,6 @@
 import time
 import json
 import random
-from tqdm import tqdm
 
 
 class Filter:
