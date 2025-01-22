@@ -1,103 +1,83 @@
-import time
+from time import perf_counter
 import json
 import random
+
+
+class TileColors:
+    GREY = '0'
+    YELLOW = '1'
+    GREEN = '2'
 
 
 class Filter:
     def __init__(self):
         self.filename = 'words.txt'
         self.json_filename = 'words.json'
-        self.words = list()
+        self.potential_words = []
         self.words_dict = {}
         with open(self.filename, 'r') as file:
             for line in file.readlines():
                 if len(line.strip()) == 5:
-                    self.words.append(line.strip().lower())
+                    self.potential_words.append(line.strip().lower())
 
         with open(self.json_filename, 'r') as file:
             self.words_dict = json.load(file)
 
-    def filter(self, guess_word: str, colors: str) -> list:
+    def filter(self, guess_word: str, guess_word_colors: str) -> list:
         """Filter the remaining words with a guess from the user.
 
         Args:
             guess_word (str): the word the user guessed list of letters that form the
-            colors (str): the corresponding colors to the word that the user guessed (from wordle)
+            guess_word_colors (str): the corresponding colors to the word that the user guessed (from wordle)
 
         return
             list: a whitelist of remaining possible words
         """
-        start_time = time.time()
-        # create the lists from the word
-        guess_word_list = list()
-        color_list = list()
-        for i in range(0, 5):
-            guess_word_list.append(guess_word[i])
-            color_list.append(colors[i])
+        start_time = perf_counter()
 
-        # create the blacklist
-        black_list = list()
+        # transform the strings into lists
+        guess_word_letters = [guess_word[i] for i in range(0, 5)]
+        guess_word_tile_colors = [guess_word_colors[i] for i in range(0, 5)]
 
-        # eliminate the word that the user guessed
-        black_list.append(guess_word)
+        # create the blacklist - eliminating the word that the user guessed
+        black_list_words = [guess_word]
 
+        green_letters = []
         # eliminate words based on color outcomes from the guess word
         for i in range(0, 5):
-            if color_list[i] == '2':
-                # color is green
-                # eliminate all words without that letter in that position
-                for word in self.words:
-                    if guess_word_list[i] != word[i]:
-                        black_list.append(word)
-            elif color_list[i] == '1':
-                # color is yellow
-                # eliminate all words with that letter in that position
-                for word in self.words:
-                    if guess_word_list[i] == word[i]:
-                        black_list.append(word)
-                    # word must have that letter in it somewhere
-                    fault = True
-                    for letter in word:
-                        if guess_word_list[i] == letter:
-                            fault = False
-                    if fault:
-                        black_list.append(word)
+            tile_color = guess_word_tile_colors[i]
+
+            if tile_color == TileColors.GREEN:
+                self.__filter_with_green_tile(i, guess_word_letters, guess_word_tile_colors, green_letters,
+                                              black_list_words)
+            elif tile_color == TileColors.YELLOW:
+                self.__filter_with_yellow_tile(i, guess_word_letters, black_list_words)
             else:
-                # color is grey
-                # eliminate all words with that letter anywhere
-                for word in self.words:
-                    fault = False
-                    for letter in word:
-                        if guess_word_list[i] == letter:
-                            fault = True
-                    if fault:
-                        black_list.append(word)
+                self.__filter_with_grey_title(i, guess_word_letters, green_letters, black_list_words)
 
-        # create the whitelist
-        white_list = list()
-        # build the whitelist using the words and the blacklist
-        for word in self.words:
-            if word not in black_list:
-                white_list.append(word)
+        white_list_words = []
+        for word in self.potential_words:
+            if word not in black_list_words:
+                white_list_words.append(word)
 
-        for word in black_list:
+        for word in black_list_words:
             if word in self.words_dict.keys():
                 del self.words_dict[word]
 
-        end_time = time.time()
-        print(f'Eliminated : {len(black_list)} words')
-        print(f'Remaining  : {len(white_list)} words')
-        print(f'Rendered in {round(end_time - start_time,3)} seconds')
+        end_time = perf_counter()
+        print(f'Eliminated : {len(black_list_words)} words')
+        print(f'Remaining  : {len(white_list_words)} words')
+        print(f'Rendered in {round(end_time - start_time, 3)} seconds')
 
         self.print_suggestions()
 
         # set self.words to the whitelist
-        self.words = white_list
+        self.potential_words = white_list_words
         # return the whitelist
-        return self.words
+        return self.potential_words
 
     def current_list(self):
-        return self.words
+        return self.potential_words
 
     def print_suggestions(self):
         sort = sorted(self.words_dict.items(), key=lambda item: item[1])
@@ -109,8 +89,8 @@ class Filter:
         print(f'Suggestions: {suggestions}')
 
     def random_word(self):
-        if self.words:
-            choice = random.choice(self.words)
+        if self.potential_words:
+            choice = random.choice(self.potential_words)
             if "'" in choice or "." in choice or "-" in choice:
                 return ' '
             return choice
@@ -120,4 +100,52 @@ class Filter:
         with open(self.filename, 'r') as file:
             for line in file.readlines():
                 if len(line.strip()) == 5:
-                    self.words.append(line.strip().lower())
+                    self.potential_words.append(line.strip().lower())
+
+    def __filter_with_green_tile(self, letter_index: int, guess_word_letters: list[str],
+                                 guess_word_tile_colors: list[str], green_letters: list[str],
+                                 black_list_words: list[str]):
+        tile_letter = guess_word_letters[letter_index]
+        tile_color = guess_word_tile_colors[letter_index]
+
+        if tile_color == TileColors.GREEN:
+            # store the green letters to help decide grey letters
+            if tile_letter not in green_letters:
+                green_letters.append(tile_letter)
+            # eliminate all words without that letter in that position
+            for word in self.potential_words:
+                if tile_letter != word[letter_index]:
+                    black_list_words.append(word)
+
+    def __filter_with_yellow_tile(self, letter_index: int, guess_word_letters: list[str], black_list_words: list[str]):
+        tile_letter = guess_word_letters[letter_index]
+
+        # eliminate all words with that letter in that position
+        for word in self.potential_words:
+            if tile_letter == word[letter_index]:
+                black_list_words.append(word)
+            else:
+                # eliminate words that do not have that letter in it somewhere else
+                letter_found_elsewhere = False
+                for j in range(0, 5):
+                    if j == letter_index:
+                        continue
+                    if tile_letter == word[j]:
+                        letter_found_elsewhere = True
+                        break
+                if not letter_found_elsewhere:
+                    black_list_words.append(word)
+
+    def __filter_with_grey_title(self, letter_index: int, guess_word_letters: list[str], green_letters: list[str],
+                                 black_list_words: list[str]):
+        tile_letter = guess_word_letters[letter_index]
+
+        # checks the case where a letter is green in one spot, but if elsewhere in guessed word, appears grey
+        # be sure we do not eliminate words prematurely
+        if tile_letter not in green_letters:
+            # eliminate all words with that letter anywhere
+            for word in self.potential_words:
+                for letter in word:
+                    if tile_letter == letter:
+                        black_list_words.append(word)
+                        break
