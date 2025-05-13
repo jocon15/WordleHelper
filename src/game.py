@@ -9,12 +9,12 @@ class Game:
 
     def run(self):
         self._print_menu()
-        self._filterAPI.print_suggestions()
+        self._filterAPI.print_initial_suggestions()
         while True:
             user_word = input('Enter a word: ')
             if user_word == 'reroll':
                 print('Re-rolling suggested words')
-                self._filterAPI.print_suggestions()
+                self._filterAPI.print_initial_suggestions()
                 continue
             elif user_word == 'reset-':
                 print('words reset')

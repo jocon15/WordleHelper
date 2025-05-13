@@ -30,7 +30,7 @@ class Filter:
             guess_word (str): the word the user guessed list of letters that form the
             guess_word_colors (str): the corresponding colors to the word that the user guessed (from wordle)
 
-        return
+        Return
             list: a whitelist of remaining possible words
         """
         start_time = perf_counter()
@@ -69,7 +69,7 @@ class Filter:
         print(f'Remaining  : {len(white_list_words)} words')
         print(f'Rendered in {round(end_time - start_time, 3)} seconds')
 
-        self.print_suggestions()
+        self.print_initial_suggestions()
 
         # set self.words to the whitelist
         self.potential_words = white_list_words
@@ -79,7 +79,7 @@ class Filter:
     def current_list(self):
         return self.potential_words
 
-    def print_suggestions(self):
+    def print_initial_suggestions(self):
         sort = sorted(self.words_dict.items(), key=lambda item: item[1])
         sort = sort[-100:]
         sort.reverse()
