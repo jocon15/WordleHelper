@@ -14,7 +14,7 @@ class Game:
             user_word = input('Enter a word: ')
             if user_word == 'reroll':
                 print('Re-rolling suggested words')
-                self._filterAPI.print_initial_suggestions()
+                self._filterAPI.print_remaining_suggestions()
                 continue
             elif user_word == 'reset-':
                 print('words reset')
@@ -36,8 +36,7 @@ class Game:
                 print('You win!')
                 break
             print('Thinking...')
-            suggested_words = self._filterAPI.filter(user_word, user_colors)
-            # print(f'\n{suggested_words[:10]}\n')
+            self._filterAPI.filter(user_word, user_colors)
 
     @staticmethod
     def _print_menu():
