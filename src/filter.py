@@ -23,15 +23,12 @@ class Filter:
         with open(self.json_filename, 'r') as file:
             self.words_dict = json.load(file)
 
-    def filter(self, guess_word: str, guess_word_colors: str) -> list:
+    def filter(self, guess_word: str, guess_word_colors: str):
         """Filter the remaining words with a guess from the user.
 
         Args:
             guess_word (str): the word the user guessed list of letters that form the
             guess_word_colors (str): the corresponding colors to the word that the user guessed (from wordle)
-
-        Return
-            list: a whitelist of remaining possible words
         """
         start_time = perf_counter()
 
@@ -64,37 +61,77 @@ class Filter:
             if word in self.words_dict.keys():
                 del self.words_dict[word]
 
+        # set self.words to the whitelist
+        previous_potential_word_count = len(self.potential_words)
+        self.potential_words = white_list_words
+
         end_time = perf_counter()
-        print(f'Eliminated : {len(black_list_words)} words')
-        print(f'Remaining  : {len(white_list_words)} words')
+        print(f'Eliminated : {previous_potential_word_count- len(self.potential_words)} words')
+        print(f'Remaining  : {len(self.potential_words)} words')
         print(f'Rendered in {round(end_time - start_time, 3)} seconds')
 
-        self.print_initial_suggestions()
-
-        # set self.words to the whitelist
-        self.potential_words = white_list_words
-        # return the whitelist
-        return self.potential_words
-
-    def current_list(self):
-        return self.potential_words
+        self.print_remaining_suggestions()
 
     def print_initial_suggestions(self):
-        sort = sorted(self.words_dict.items(), key=lambda item: item[1])
-        sort = sort[-100:]
-        sort.reverse()
-        suggestions = ''
-        for _ in range(11):
-            suggestions += f'{random.choice(sort)[0]} '
-        print(f'Suggestions: {suggestions}')
+        sorted_words_dict = sorted(self.words_dict.items(), key=lambda item: item[1])
+        sorted_words_dict = sorted_words_dict[-100:]
+        sorted_words_dict.reverse()
 
-    def random_word(self):
-        if self.potential_words:
-            choice = random.choice(self.potential_words)
-            if "'" in choice or "." in choice or "-" in choice:
-                return ' '
-            return choice
-        return ' '
+        suggestions = self.build_suggestion_list(sorted_words_dict)
+
+        self.print_suggestions_list(suggestions)
+
+    def print_remaining_suggestions(self):
+        potential_words_dict = {}
+        for word in self.potential_words:
+            try:
+                potential_words_dict[word] = self.words_dict[word]
+            except KeyError:
+                # some words with dashes and such are not shared between the two files, skip them
+                continue
+
+        sorted_potential_words_dict = sorted(potential_words_dict.items(), key=lambda item: item[1])
+        if len(sorted_potential_words_dict) > 100:
+            sorted_potential_words_dict = sorted_potential_words_dict[-100:]
+        sorted_potential_words_dict.reverse()
+
+        suggestions = self.build_suggestion_list(sorted_potential_words_dict)
+
+        self.print_suggestions_list(suggestions)
+
+    @staticmethod
+    def build_suggestion_list(sorted_potential_words_list: list) -> list:
+        suggestions = []
+        if len(sorted_potential_words_list) <= 11:
+            for word_tuple in sorted_potential_words_list:
+                suggestions.append(word_tuple[0])
+            return suggestions
+
+        while len(suggestions) != 11:
+            random_suggestion = random.choice(sorted_potential_words_list)[0]
+            if random_suggestion in suggestions:
+                continue
+            if not Filter.is_likely_word(random_suggestion):
+                continue
+            suggestions.append(random_suggestion)
+        return suggestions
+
+    @staticmethod
+    def is_likely_word(potential_word: str) -> bool:
+        if '-' in potential_word:
+            return False
+        if '.' in potential_word:
+            return False
+        if potential_word[-1] == 's' and potential_word[-2] != 's':
+            return False
+        return True
+
+    @staticmethod
+    def print_suggestions_list(suggestions: list):
+        output = ''
+        for suggestion in suggestions:
+            output += f'{suggestion} '
+        print(f'Suggestions: {output}')
 
     def reset(self):
         with open(self.filename, 'r') as file:
