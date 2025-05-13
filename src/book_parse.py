@@ -72,5 +72,23 @@ def main():
         json.dump(all_words, file)
 
 
+def remove_garbage():
+    with open('words.json') as file:
+        words = json.load(file)
+
+    new_words = {}
+    for key in words:
+        if '-' in key or '.' in key or ' ' in key:
+            continue
+        else:
+            new_words[key] = words[key]
+
+    with open('words.json', 'w') as newFile:
+        json.dump(new_words, newFile)
+
 if __name__ == '__main__':
-    main()
+    # main()
+    remove_garbage()
+
+
+
