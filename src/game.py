@@ -4,26 +4,26 @@ from filter import Filter
 class Game:
 
     def __init__(self, suggestion_count=5):
-        self._filterAPI = Filter()
+        self._filter = Filter()
         self._suggestion_count = suggestion_count
 
     def run(self):
         self._print_menu()
-        self._filterAPI.print_initial_suggestions()
+        self._filter.print_initial_suggestions()
         while True:
             user_word = input('Enter a word: ')
             if user_word == 'reroll':
                 print('Re-rolling suggested words')
-                self._filterAPI.print_remaining_suggestions()
+                self._filter.print_remaining_suggestions()
                 continue
             elif user_word == 'reset-':
                 print('words reset')
-                self._filterAPI.reset()
+                self._filter.reset()
                 continue
             elif user_word == 'exit':
                 break
             elif user_word == 'see all':
-                print(f'{self._filterAPI.current_list()}')
+                print(f'{self._filter.potential_words}')
                 continue
             elif len(user_word) != 5:
                 print('Invalid length')
@@ -36,7 +36,7 @@ class Game:
                 print('You win!')
                 break
             print('Thinking...')
-            self._filterAPI.filter(user_word, user_colors)
+            self._filter.filter(user_word, user_colors)
 
     @staticmethod
     def _print_menu():
@@ -51,9 +51,3 @@ class Game:
         print('Yellow    -> 1')
         print('Grey      -> 0')
         print('===============================================')
-
-    def _print_random_words(self):
-        output = 'Random words: '
-        for _ in range(0, self._suggestion_count):
-            output += f'{self._filterAPI.random_word()} '
-        print(output)
